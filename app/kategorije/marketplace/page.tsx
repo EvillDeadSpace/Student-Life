@@ -5,6 +5,9 @@ import {
   PlusIcon,
   ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
+
+import { categories } from "@/components/constants/ConstMarketPlace";
+
 export default function MarketPlace() {
   return (
     <div className='min-h-screen bg-gray-50 dark:bg-gray-900'>
@@ -47,6 +50,69 @@ export default function MarketPlace() {
               </p>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Categories Grid */}
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 mt-10'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8'>
+          {categories.map((category, index) => (
+            <Link
+              key={category.id}
+              href={`marketplace/${category.slug}`}
+              className={`group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 opacity-0 animate-fadeInUp cursor-pointer ${
+                index === 2 ? "md:col-span-2 lg:col-span-2" : ""
+              }`}
+              style={{ animationDelay: `${(index + 1) * 0.1}s` }}
+            >
+              {/* Gradient Background */}
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${category.color} ${category.hoverColor} opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-2xl`}
+              ></div>
+
+              {/* Card Content */}
+              <div className='relative p-8'>
+                {/* Icon */}
+                <div
+                  className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${category.color} rounded-xl shadow-lg mb-6 group-hover:scale-110 transition-transform duration-300`}
+                >
+                  <category.icon className='w-8 h-8 text-white' />
+                </div>
+
+                {/* Title */}
+                <h3 className='text-2xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors duration-300'>
+                  {category.title}
+                </h3>
+
+                {/* Description */}
+                <p className='text-gray-600 dark:text-gray-300 leading-relaxed mb-6'>
+                  {category.description}
+                </p>
+
+                {/* CTA Button */}
+                <div className='flex items-center text-teal-600 dark:text-teal-400 font-medium group-hover:text-teal-700 dark:group-hover:text-teal-300 transition-colors duration-300'>
+                  <span>Saznaj više</span>
+                  <svg
+                    className='w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform duration-300'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M9 5l7 7-7 7'
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Decorative Elements */}
+              <div className='absolute top-4 right-4 w-20 h-20 bg-gradient-to-br from-white/10 to-transparent rounded-full blur-xl'></div>
+              <div className='absolute bottom-4 left-4 w-16 h-16 bg-gradient-to-tr from-white/5 to-transparent rounded-full blur-lg'></div>
+            </Link>
+          ))}
         </div>
       </div>
     </div>
