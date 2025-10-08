@@ -19,8 +19,15 @@ export async function FetchBooks(): Promise<BooksAndEtc[]> {
   try {
     const routePath = "/api/books";
     const base = process.env.NEXT_PUBLIC_API_URL ?? "";
+    const serverBase =
+      base ||
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
+      (process.env.NODE_ENV === "development"
+        ? `http://localhost:${process.env.PORT || 3000}`
+        : "");
     const url =
-      typeof window === "undefined" ? `${base}${routePath}` : routePath;
+      typeof window === "undefined" ? `${serverBase}${routePath}` : routePath;
 
     const res = await fetch(url, {
       method: "GET",
@@ -31,8 +38,6 @@ export async function FetchBooks(): Promise<BooksAndEtc[]> {
       },
     });
 
-    if (!res.ok)
-      throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
     return await res.json();
   } catch (err) {
     console.error("FetchBooks error", err);
