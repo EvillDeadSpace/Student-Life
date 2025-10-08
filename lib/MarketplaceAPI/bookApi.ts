@@ -29,6 +29,14 @@ export async function FetchBooks(): Promise<BooksAndEtc[]> {
     const url =
       typeof window === "undefined" ? `${serverBase}${routePath}` : routePath;
 
+    // If server-side and we couldn't construct a server base, bail out — fetching an internal route during prerender can return HTML (error page)
+    if (typeof window === "undefined" && !serverBase) {
+      console.warn(
+        "FetchBooks: no server base available during SSR — returning [] to avoid prerender failure."
+      );
+      return [];
+    }
+
     const res = await fetch(url, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
@@ -37,6 +45,34 @@ export async function FetchBooks(): Promise<BooksAndEtc[]> {
         revalidate: 3600,
       },
     });
+
+    if (!res.ok) {
+      if (res.status === 404) {
+        console.warn(
+          `FetchBooks: ${url} returned 404 — returning [] to avoid prerender failure.`
+        );
+        return [];
+      }
+      const text = await res.text().catch(() => "");
+      throw new Error(
+        `Fetch failed: ${res.status} ${res.statusText}. Body: ${text.slice(
+          0,
+          200
+        )}`
+      );
+    }
+
+    const contentType = res.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+      const text = await res.text().catch(() => "");
+      console.warn(
+        `FetchBooks: ${url} returned non-JSON response (content-type: ${contentType}). Returning []. Response start: ${text.slice(
+          0,
+          200
+        )}`
+      );
+      return [];
+    }
 
     return await res.json();
   } catch (err) {
