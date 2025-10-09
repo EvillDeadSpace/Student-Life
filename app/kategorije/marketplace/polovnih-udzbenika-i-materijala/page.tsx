@@ -1,6 +1,9 @@
 import { FetchBooks } from "@/lib/MarketplaceAPI/bookApi";
 import React from "react";
 
+// Force this page to be rendered at request time so internal API routes are available
+export const dynamic = "force-dynamic";
+
 export default async function PolovneKnjige() {
   const data = await FetchBooks();
   console.log(
