@@ -1,16 +1,15 @@
-import { FetchBooks } from "@/lib/MarketplaceAPI/bookApi";
 import React from "react";
+import { prisma } from "@/lib/prisma";
 
 // Force this page to be rendered at request time so internal API routes are available
 export const dynamic = "force-dynamic";
 
 export default async function PolovneKnjige() {
-  const data = await FetchBooks();
-  console.log(
-    "FetchBooks result length:",
-    Array.isArray(data) ? data.length : typeof data,
-    data
-  );
+  // Read directly from the database in the server component to avoid
+  // making an internal HTTP request which can fail during prerender.
+  const data = await prisma.bookList.findMany({});
+
+  console.log("PolovneKnjige - db result length:", data.length);
 
   if (!Array.isArray(data) || data.length === 0) {
     return <div>No books found.</div>;
