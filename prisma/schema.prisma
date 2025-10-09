@@ -21,6 +21,10 @@ model User {
   posts   Post[]
   Comment Comment[]
   likes   Likes[]
+
+  // Relations for marketplace books
+  booksForSale BookList[] @relation("BookListSeller")
+  booksBought  BookList[] @relation("BookListBuyer")
 }
 
 model Post {
@@ -42,9 +46,9 @@ model Post {
 model Comment {
   id        String   @id @default(cuid())
   content   String
-  userId    Int 
+  userId    Int
   user      User     @relation(fields: [userId], references: [id])
-  postId    Int 
+  postId    Int
   post      Post     @relation(fields: [postId], references: [id])
   createdAt DateTime @default(now())
 }
@@ -58,4 +62,31 @@ model Likes {
   post Post @relation(fields: [postId], references: [id])
 
   @@unique([userId, postId])
+}
+
+// Book for marketplace
+model BookList {
+  id          Int     @id @default(autoincrement())
+  title       String
+  author      String
+  faculty     String
+  subject     String
+  condition   String
+  price       Float
+  description String
+  isSold      Boolean @default(false)
+
+  // Relations
+  sellerId Int
+  seller   User @relation("BookListSeller", fields: [sellerId], references: [id])
+
+  // Optional buyer if the book gets purchased through the platform
+  buyerId Int?
+  buyer   User? @relation("BookListBuyer", fields: [buyerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sellerId])
+  @@index([isSold])
 }
