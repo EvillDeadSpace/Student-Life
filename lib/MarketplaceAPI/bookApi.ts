@@ -36,8 +36,12 @@ export async function FetchBooks(): Promise<BooksAndEtc[]> {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data: BooksAndEtc[] = await response.json();
-    return data;
+    const data = await response.json();
+
+    // Fixing to 2 format
+    const books: BooksAndEtc[] = Array.isArray(data) ? data : data.value || [];
+
+    return books;
   } catch (error) {
     console.error("Greška pri učitavanju knjiga:", error);
     return [];
