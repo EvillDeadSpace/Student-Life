@@ -37,6 +37,13 @@ export async function FetchBooks(): Promise<BooksAndEtc[]> {
       return [];
     }
 
+    // Debug: log serverBase and url so we can inspect build-time behavior on Vercel
+    try {
+      console.warn("FetchBooks debug - serverBase:", serverBase, "url:", url);
+    } catch {
+      /* ignore logging errors */
+    }
+
     const res = await fetch(url, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
