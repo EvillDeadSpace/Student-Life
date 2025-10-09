@@ -29,13 +29,9 @@ export async function FetchBooks(): Promise<BooksAndEtc[]> {
     const url =
       typeof window === "undefined" ? `${serverBase}${routePath}` : routePath;
 
-    // If server-side and we couldn't construct a server base, bail out — fetching an internal route during prerender can return HTML (error page)
-    if (typeof window === "undefined" && !serverBase) {
-      console.warn(
-        "FetchBooks: no server base available during SSR — returning [] to avoid prerender failure."
-      );
-      return [];
-    }
+    // Note: if serverBase is empty we still attempt a relative fetch to `/api/books`.
+    // This allows request-time server rendering (with `dynamic = 'force-dynamic'`) to
+    // call the internal API even when NEXT_PUBLIC_API_URL isn't configured.
 
     // Debug: log serverBase and url so we can inspect build-time behavior on Vercel
     try {
