@@ -17,12 +17,13 @@ export interface BooksAndEtc {
 // Fetch all marketplace for books and etc
 export async function FetchBooks(): Promise<BooksAndEtc[]> {
   try {
-    // Automatska detekcija okruženja
     const baseURL =
       process.env.NEXT_PUBLIC_API_URL ||
       (typeof window !== "undefined"
         ? window.location.origin
-        : "http://localhost:3000");
+        : process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : `http://localhost:${process.env.PORT || 3000}`);
 
     const response = await fetch(`${baseURL}/api/books`, {
       method: "GET",
