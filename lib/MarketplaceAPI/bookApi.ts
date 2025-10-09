@@ -17,86 +17,29 @@ export interface BooksAndEtc {
 // Fetch all marketplace for books and etc
 export async function FetchBooks(): Promise<BooksAndEtc[]> {
   try {
-    const routePath = "/api/books";
-    const base = process.env.NEXT_PUBLIC_API_URL ?? "";
-    const serverBase =
-      base ||
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
-      (process.env.NODE_ENV === "development"
-        ? `http://localhost:${process.env.PORT || 3000}`
-        : "");
-    const url =
-      typeof window === "undefined" ? `${serverBase}${routePath}` : routePath;
+    // Automatska detekcija okruženja
+    const baseURL =
+      process.env.NEXT_PUBLIC_API_URL ||
+      (typeof window !== "undefined"
+        ? window.location.origin
+        : "http://localhost:3000");
 
-    // Note: if serverBase is empty we still attempt a relative fetch to `/api/books`.
-    // This allows request-time server rendering (with `dynamic = 'force-dynamic'`) to
-    // call the internal API even when NEXT_PUBLIC_API_URL isn't configured.
-
-    // Debug: log serverBase and url so we can inspect build-time behavior on Vercel
-    try {
-      console.warn("FetchBooks debug - serverBase:", serverBase, "url:", url);
-    } catch {
-      /* ignore logging errors */
-    }
-
-    const res = await fetch(url, {
+    const response = await fetch(`${baseURL}/api/books`, {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
-      cache: "default",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
     });
 
-    // Log response metadata for debugging
-    const contentType = res.headers.get("content-type") || "";
-    console.warn(
-      `FetchBooks response - url: ${url} status: ${res.status} ok: ${res.ok} content-type: ${contentType}`
-    );
-
-    if (!res.ok) {
-      if (res.status === 404) {
-        console.warn(
-          `FetchBooks: ${url} returned 404 — returning [] to avoid prerender failure.`
-        );
-        return [];
-      }
-      const text = await res.text().catch(() => "");
-      console.error(
-        `FetchBooks unexpected response body start: ${text.slice(0, 200)}`
-      );
-      throw new Error(
-        `Fetch failed: ${res.status} ${res.statusText}. Body: ${text.slice(
-          0,
-          200
-        )}`
-      );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    // If it's not JSON, log a preview and return [] so we don't throw parsing errors during runtime
-    if (!contentType.includes("application/json")) {
-      const text = await res.text().catch(() => "");
-      console.warn(
-        `FetchBooks: ${url} returned non-JSON response (content-type: ${contentType}). Returning []. Response start: ${text.slice(
-          0,
-          200
-        )}`
-      );
-      return [];
-    }
-
-    // Safely parse JSON and log any parse errors
-    try {
-      const json = await res.json();
-      return json;
-    } catch (parseErr) {
-      const text = await res.text().catch(() => "");
-      console.error(
-        `FetchBooks JSON parse error. Response start: ${text.slice(0, 200)}`,
-        parseErr
-      );
-      return [];
-    }
-  } catch (err) {
-    console.error("FetchBooks error", err);
-    throw err;
+    const data: BooksAndEtc[] = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Greška pri učitavanju knjiga:", error);
+    return [];
   }
 }
