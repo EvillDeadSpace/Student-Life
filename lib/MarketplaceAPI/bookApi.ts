@@ -53,6 +53,12 @@ export async function FetchBooks(): Promise<BooksAndEtc[]> {
       },
     });
 
+    // Log response metadata for debugging
+    const contentType = res.headers.get("content-type") || "";
+    console.warn(
+      `FetchBooks response - url: ${url} status: ${res.status} ok: ${res.ok} content-type: ${contentType}`
+    );
+
     if (!res.ok) {
       if (res.status === 404) {
         console.warn(
@@ -61,6 +67,9 @@ export async function FetchBooks(): Promise<BooksAndEtc[]> {
         return [];
       }
       const text = await res.text().catch(() => "");
+      console.error(
+        `FetchBooks unexpected response body start: ${text.slice(0, 200)}`
+      );
       throw new Error(
         `Fetch failed: ${res.status} ${res.statusText}. Body: ${text.slice(
           0,
@@ -69,7 +78,7 @@ export async function FetchBooks(): Promise<BooksAndEtc[]> {
       );
     }
 
-    const contentType = res.headers.get("content-type") || "";
+    // If it's not JSON, log a preview and return [] so we don't throw parsing errors during runtime
     if (!contentType.includes("application/json")) {
       const text = await res.text().catch(() => "");
       console.warn(
@@ -81,7 +90,18 @@ export async function FetchBooks(): Promise<BooksAndEtc[]> {
       return [];
     }
 
-    return await res.json();
+    // Safely parse JSON and log any parse errors
+    try {
+      const json = await res.json();
+      return json;
+    } catch (parseErr) {
+      const text = await res.text().catch(() => "");
+      console.error(
+        `FetchBooks JSON parse error. Response start: ${text.slice(0, 200)}`,
+        parseErr
+      );
+      return [];
+    }
   } catch (err) {
     console.error("FetchBooks error", err);
     throw err;
