@@ -44,9 +44,6 @@ export async function FetchBooks(): Promise<BooksAndEtc[]> {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       cache: "default",
-      next: {
-        revalidate: 3600,
-      },
     });
 
     // Log response metadata for debugging
