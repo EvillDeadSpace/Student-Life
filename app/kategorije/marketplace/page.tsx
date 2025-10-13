@@ -54,12 +54,13 @@ export default function MarketPlace() {
       </div>
 
       {/* Categories Grid */}
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 mt-10'>
+      <div 
+      className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 mt-10'>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8'>
           {categories.map((category, index) => (
             <Link
               key={category.id}
-              href={`marketplace/${category.slug}`}
+              href={`/kategorije/marketplace/${category.slug}`}
               className={`group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 opacity-0 animate-fadeInUp cursor-pointer ${
                 index === 2 ? "md:col-span-2 lg:col-span-2" : ""
               }`}

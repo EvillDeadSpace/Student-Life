@@ -1,3 +1,5 @@
+import toast from "react-hot-toast";
+
 export interface BooksAndEtc {
   id: number;
   title: string;
@@ -14,6 +16,18 @@ export interface BooksAndEtc {
   updatedAt: Date;
 }
 
+// Payload shape expected from the client when creating a book
+export type CreateBookInput = {
+  title: string;
+  author: string;
+  faculty: string;
+  subject: string;
+  condition: string;
+  price: number;
+  description?: string;
+  sellerId?: number;
+};
+
 // Fetch all marketplace for books and etc
 export async function FetchBooks(): Promise<BooksAndEtc[]> {
   try {
@@ -24,7 +38,6 @@ export async function FetchBooks(): Promise<BooksAndEtc[]> {
         const books = await prisma.bookList.findMany({});
         return books as BooksAndEtc[];
       } catch (prismaErr) {
-        // If prisma import fails for some reason, fall back to HTTP fetch below
         console.warn(
           "Prisma direct access failed, will fallback to HTTP fetch:",
           prismaErr
@@ -57,4 +70,25 @@ export async function FetchBooks(): Promise<BooksAndEtc[]> {
     console.error("❌❌ CRITICAL ERROR in FetchBooks:", error);
     return [];
   }
+}
+
+
+// http://localhost:3000/api/books
+export async function AddBook(book: CreateBookInput) {
+  const response = await fetch('/api/books', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(book),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    toast.error(`Greška: ${response.status} - ${response.statusText}`);
+    throw new Error(`Error: ${response.status} - ${response.statusText}`);
+  }
+
+  return data;
 }
