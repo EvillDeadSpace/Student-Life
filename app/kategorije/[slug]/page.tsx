@@ -26,8 +26,6 @@ import toast, { Toaster } from "react-hot-toast";
 export default function SlugPage() {
   const params = useParams();
   const slug = params?.slug as string;
-
-
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   type Comment = {
