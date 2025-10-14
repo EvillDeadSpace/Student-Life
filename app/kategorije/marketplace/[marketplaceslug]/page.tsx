@@ -19,9 +19,9 @@ import {
 // Const import
 import { conditionMap } from "@/components/constants/SlugConstants";
 
-type Props = { params: { marketplaceslug: string } };
-
-export default async function MarketplaceSlug({ params }: Props) {
+export default async function MarketplaceSlug(props: unknown) {
+  const p = props as { params?: { marketplaceslug?: string } } | undefined;
+  const params = p?.params ?? {};
   const id = Number(params.marketplaceslug);
   if (Number.isNaN(id)) {
     notFound();
