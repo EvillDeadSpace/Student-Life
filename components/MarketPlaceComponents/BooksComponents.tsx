@@ -1,5 +1,6 @@
 import React from "react";
 import { BooksAndEtc } from "@/lib/MarketplaceAPI/bookApi";
+import Link from "next/link";
 
 interface BooksComponentsProps {
   data: BooksAndEtc[];
@@ -124,12 +125,20 @@ function BooksComponents({ data }: BooksComponentsProps) {
               </div>
 
               {/* Action Button */}
-              <button
-                className='w-full mt-4 bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white font-semibold py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer'
-                disabled={book.isSold}
-              >
-                {book.isSold ? "Prodato" : "Pogledaj detalje"}
-              </button>
+              {book.isSold ? (
+                <span
+                  className='w-full mt-4 bg-gradient-to-r from-gray-400 to-gray-500 text-white font-semibold py-3 rounded-xl transition-all duration-300 shadow-lg opacity-50 cursor-not-allowed block text-center'
+                >
+                  Prodato
+                </span>
+              ) : (
+                <Link
+                  href={`/kategorije/marketplace/${book.id}`}
+                  className='w-full mt-4 bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white font-semibold py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer block text-center'
+                >
+                  Pogledaj detalje
+                </Link>
+              )}
             </div>
 
             {/* Decorative Elements */}

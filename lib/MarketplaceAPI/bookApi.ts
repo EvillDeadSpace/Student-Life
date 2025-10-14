@@ -1,3 +1,4 @@
+import { prisma } from './../prisma';
 import toast from "react-hot-toast";
 
 export interface BooksAndEtc {
@@ -71,6 +72,8 @@ export async function FetchBooks(): Promise<BooksAndEtc[]> {
     return [];
   }
 }
+
+//
 
 
 // http://localhost:3000/api/books

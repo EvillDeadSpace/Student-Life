@@ -26,6 +26,8 @@ import toast, { Toaster } from "react-hot-toast";
 export default function SlugPage() {
   const params = useParams();
   const slug = params?.slug as string;
+
+
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   type Comment = {
@@ -180,8 +182,8 @@ export default function SlugPage() {
   return (
     <div className='min-h-screen bg-gray-50 dark:bg-gray-900'>
       {/* Header */}
-      <div className='bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6'>
+      <div className='bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 backdrop-blur-md bg-opacity-95 dark:bg-opacity-95'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4'>
           <div className='flex items-center justify-between'>
             <Link
               href='/kategorije'
@@ -190,8 +192,6 @@ export default function SlugPage() {
               <ArrowLeftIcon className='w-5 h-5 mr-2' />
               Nazad na kategorije
             </Link>
-
-            {/* Category & Location Badges */}
             <div className='flex flex-wrap gap-2'>
               <div className='bg-gradient-to-r from-teal-500 to-blue-600 text-white px-4 py-2 rounded-lg font-medium shadow-lg flex items-center'>
                 <TagIcon className='w-4 h-4 mr-2' />
@@ -220,6 +220,13 @@ export default function SlugPage() {
                 {post.lokacija}
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div className='bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6'>
+          <div className='flex items-center justify-between'>
+            {/* Category & Location Badges */}
           </div>
 
           {/* Article Title */}
