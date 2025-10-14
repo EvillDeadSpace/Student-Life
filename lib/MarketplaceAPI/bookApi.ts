@@ -1,4 +1,3 @@
-import { prisma } from './../prisma';
 import toast from "react-hot-toast";
 
 export interface BooksAndEtc {
