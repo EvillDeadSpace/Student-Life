@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import LinkComponents from "./Link";
 import UserAuth from "./UserAuth";
 import { 
@@ -11,6 +12,12 @@ import {
 
 export default function MobileMenuToggle() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Check if component is mounted (client-side)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Prevent body scroll when menu is open
   useEffect(() => {
@@ -51,17 +58,17 @@ export default function MobileMenuToggle() {
         )}
       </button>
 
-      {/* Mobile Menu Overlay */}
-      {isMenuOpen && (
+      {/* Mobile Menu Overlay - rendered via Portal */}
+      {mounted && isMenuOpen && createPortal(
         <>
           {/* Backdrop */}
           <div 
-            className='fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-fadeInUp'
+            className='fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998] animate-fadeInUp'
             onClick={() => setIsMenuOpen(false)}
           ></div>
 
           {/* Menu Panel */}
-          <div className='fixed top-16 left-0 right-0 bottom-0 z-50 animate-fadeInUp'>
+          <div className='fixed top-0 left-0 right-0 bottom-0 z-[9999] animate-fadeInUp pt-16'>
             <div className='h-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-2xl shadow-2xl overflow-y-auto'>
               {/* Gradient header */}
               <div className='sticky top-0 h-1 bg-gradient-to-r from-teal-500 via-blue-500 to-purple-500'></div>
@@ -147,7 +154,8 @@ export default function MobileMenuToggle() {
               </div>
             </div>
           </div>
-        </>
+        </>,
+        document.body
       )}
     </div>
   );
