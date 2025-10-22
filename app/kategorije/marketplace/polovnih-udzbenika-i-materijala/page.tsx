@@ -1,15 +1,15 @@
-import React from "react";
-import { FetchBooks } from "@/lib/MarketplaceAPI/bookApi";
+import { fetchMarketplaceItems } from "@/lib/MarketplaceAPI/marketplaceApi";
 import BooksComponents from "@/components/MarketPlaceComponents/BooksComponents";
 import Link from "next/link";
+import { ItemType } from "@prisma/client";
 
 // Force this page to be rendered at request time so internal API routes are available
 export const dynamic = "force-dynamic";
 
 export default async function PolovneKnjige() {
-  let data: unknown = [];
+  let data = [];
   try {
-    data = await FetchBooks();
+    data = await fetchMarketplaceItems(ItemType.BOOK);
   } catch (err) {
     // Log the error server-side but render a friendly UI to the user
     // so client navigation doesn't surface raw error objects or SQL.
@@ -32,6 +32,12 @@ export default async function PolovneKnjige() {
               >
                 Nazad na Marketplace
               </Link>
+                     <Link 
+            href={'/kategorije/marketplace/dodaj-artiklu'}
+          
+            className="mt-8 inline-block bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300 opacity-0 ml-2 animate-fadeInUp delay-400" >
+              Dodaj svoju artiklu 
+            </Link> 
             </div>
           </div>
         </div>
@@ -65,7 +71,14 @@ export default async function PolovneKnjige() {
             <p className='text-gray-600 dark:text-gray-300'>
               Trenutno nema knjiga u ponudi. Proveri ponovo kasnije!
             </p>
+                   <Link 
+            href={'/kategorije/marketplace/dodaj-artiklu'}
+          
+            className="mt-8 inline-block bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300 opacity-0 ml-2 animate-fadeInUp delay-400" >
+              Dodaj svoju artiklu 
+            </Link>
           </div>
+          
         </div>
       </div>
     );

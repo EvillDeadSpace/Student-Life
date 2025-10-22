@@ -39,7 +39,7 @@ export const categories: Category[] = [
   {
     id: 3,
     title: "Kurseva i privatnih časova",
-    slug: "kurseva",
+    slug: "kursevi",
     description:
       "Ponude i potražnje za kursevima i privatnim časovima koji pomažu studentima da unaprijede znanje i savladaju gradivo efikasnije.",
     icon: UserGroupIcon,

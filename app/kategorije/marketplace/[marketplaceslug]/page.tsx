@@ -27,7 +27,7 @@ export default async function MarketplaceSlug(props: unknown) {
     notFound();
   }
 
-  const book = await prisma.bookList.findUnique({
+  const book = await prisma.marketplaceItem.findUnique({
     where: { id },
   });
 
@@ -36,7 +36,7 @@ export default async function MarketplaceSlug(props: unknown) {
   }
 
   const conditionInfo =
-    conditionMap[book.condition] || conditionMap["zadovoljavajuće"];
+    conditionMap[book.condition as string] || conditionMap["zadovoljavajuće"];
 
   return (
     <div className='min-h-screen bg-gray-50 dark:bg-gray-900 bg-grid-pattern'>

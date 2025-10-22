@@ -22,10 +22,13 @@ model User {
   Comment Comment[]
   likes   Likes[]
 
-  // Relations for marketplace books
-  booksForSale BookList[] @relation("BookListSeller")
-  booksBought  BookList[] @relation("BookListBuyer")
+
+  // Marketplace relations (replaces BookList/StudentEquipment relations)
+  marketplaceItemsForSale     MarketplaceItem[] @relation("MarketplaceSeller")
+  marketplaceItemsPurchased   MarketplaceItem[] @relation("MarketplaceBuyer")
 }
+
+
 
 model Post {
   id         Int      @id @default(autoincrement())
@@ -65,28 +68,58 @@ model Likes {
 }
 
 // Book for marketplace
-model BookList {
-  id          Int     @id @default(autoincrement())
-  title       String
-  author      String
-  faculty     String
-  subject     String
-  condition   String
-  price       Float
-  description String
-  isSold      Boolean @default(false)
+enum ItemType {
+  BOOK
+  EQUIPMENT
+  COURSE
+}
 
-  // Relations
-  sellerId Int
-  seller   User @relation("BookListSeller", fields: [sellerId], references: [id])
+enum EquipmentCategory {
+  LAPTOP
+  TABLET
+  KALKULATOR
+  LAB_OPREMA
+  SKOLSKI_PRIBOR
+  TEHNICKA_OPREMA
+  OSTALO
+}
 
-  // Optional buyer if the book gets purchased through the platform
-  buyerId Int?
-  buyer   User? @relation("BookListBuyer", fields: [buyerId], references: [id])
+// Market place item
+model MarketplaceItem {
+  id         Int                @id @default(autoincrement())
+  type       ItemType
+  title      String
+  // generic optional fields for different item types
+  author     String?            // useful for BOOK
+  subject    String?            // useful for BOOK
+  brand      String?            // useful for EQUIPMENT
+  model      String?            // useful for EQUIPMENT
+  faculty    String?            // common
+  category   EquipmentCategory? // optional, only for equipment
+  condition  String?            // or change to enum later
+  price      Decimal            @db.Decimal(10,2)
+  description String?
+  images     String[]           @default([])       // postgres string array of urls
+  metadata   Json?                                // flexible per-type data (ISBN, pages, warranty...)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isSold     Boolean            @default(false)
+  isArchived Boolean            @default(false)
+  slug       String?            @unique
+
+  sellerId   Int
+  seller     User               @relation("MarketplaceSeller", fields: [sellerId], references: [id], onDelete: Cascade)
+
+  buyerId    Int?
+  buyer      User?              @relation("MarketplaceBuyer", fields: [buyerId], references: [id])
+
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
 
   @@index([sellerId])
   @@index([isSold])
+  @@index([type])
+  @@index([category])
+  @@index([faculty])
 }
+
+

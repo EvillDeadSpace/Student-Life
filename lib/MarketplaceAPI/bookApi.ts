@@ -1,4 +1,6 @@
-import toast from "react-hot-toast";
+// NOTE: do NOT import react-hot-toast here because this module is used
+// on both server and client. Importing a client-only library in server
+// code can cause issues. The UI should show toasts from client code.
 
 export interface BooksAndEtc {
   id: number;
@@ -88,8 +90,10 @@ export async function AddBook(book: CreateBookInput) {
   const data = await response.json();
 
   if (!response.ok) {
-    toast.error(`Greška: ${response.status} - ${response.statusText}`);
-    throw new Error(`Error: ${response.status} - ${response.statusText}`);
+    // Let the caller handle showing UI (toasts). Throw an error so
+    // client code (which can use react-hot-toast) can display a message.
+    const message = data?.message || `${response.status} - ${response.statusText}`;
+    throw new Error(message);
   }
 
   return data;
